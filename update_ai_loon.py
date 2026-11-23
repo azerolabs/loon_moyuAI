@@ -1,5 +1,6 @@
 """Update the Loon rule list from ddgksf2013's AI rules."""
 
+from datetime import datetime, timezone
 from pathlib import Path
 import re
 from urllib.request import Request, urlopen
@@ -38,6 +39,8 @@ if __name__ == "__main__":
     request = Request(SOURCE, headers={"User-Agent": "Loon/689 CFNetwork/3860.400.51.2.6 Darwin/25.3.0", "Accept": "*/*"})
     with urlopen(request, timeout=15) as response:
         result, count = convert(response.read().decode("utf-8"))
+    check_month = datetime.now(timezone.utc).strftime("%Y-%m")
+    result = f"# Last successful upstream check (UTC month): {check_month}\n{result}"
     OUTPUT.write_text(result, encoding="utf-8", newline="\n")
     print(f"Updated {OUTPUT.name}: {count} rules")
 
